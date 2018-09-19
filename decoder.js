@@ -5,7 +5,9 @@ function numberofchar(str, letter) {
 }
 document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
 document.getElementById('basefile').addEventListener('change', readbaseFile, false);
-var scorecard; var zeroscore=0;
+var scorecard; var zeroscore=0; var answer;
+
+
  function readbaseFile(evt) {
     //Retrieve the first (and only!) File from the FileList object
     var f = evt.target.files[0];
@@ -14,7 +16,11 @@ var scorecard; var zeroscore=0;
       var r = new FileReader();
       r.onload = function(e) {
         var contents = e.target.result;
+        document.getElementById("part1").style.display="none"
+
         makescorecard(contents);
+        document.getElementById("part2").style.display="inline";
+
 
 
       }
@@ -32,8 +38,10 @@ function readSingleFile(evt) {
      var r = new FileReader();
      r.onload = function(e) {
        var contents = e.target.result;
+       document.getElementById("part2").style.display="none"
+      
        decoder(contents)
-
+       document.getElementById("part3").style.display="inline";
 
      }
       r.readAsText(f);
@@ -41,8 +49,30 @@ function readSingleFile(evt) {
      alert("Failed to load file");
    }
  }
+ /* name: saveTextAsFile()
+    purpose: save the encoded file
+*/
+ function saveTextAsFile()
+{
 
+   var textToSaveAsBlob = new Blob([answer], {type:"text/plain"});
+   var textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+   var fileNameToSaveAs = document.getElementById("saveAS").value;
 
+   var downloadLink = document.createElement("a");
+   downloadLink.download = fileNameToSaveAs;
+   downloadLink.innerHTML = "Download File";
+   downloadLink.href = textToSaveAsURL;
+   downloadLink.onclick = destroyClickedElement;
+   downloadLink.style.display = "none";
+   document.body.appendChild(downloadLink);
+
+   downloadLink.click();
+}
+function destroyClickedElement(event)
+{
+    document.body.removeChild(event.target);
+}
 
 function decoder(contents)
 {
@@ -51,7 +81,7 @@ function decoder(contents)
   var alpha="abcdefghijklmnopqrstuvwxyz";
 
   var alphabet="etoaisnrhldumywcfgbpvkxjqz";  // order of frequency in input
-  encry.str=contents.slice(1,10000); /* the incoded message */
+  encry.str=contents.slice(0,10000); /* the incoded message */
   console.log(encry.str.length);
   encry.freq=[]; /* count number of char in message */
   encry.key={};
@@ -60,6 +90,8 @@ function decoder(contents)
     encry.key[c]=c; /* building array key */
     encry.freq.push([c,numberofchar(encry.str, c)]);
   }
+
+
   // encry.freq.sort(function(a,b){
   //     return a[1]-b[1];
   // });
@@ -75,54 +107,52 @@ function decoder(contents)
     encry.key=swapkeys(encry.key);
   }
 
-  encry.finalstr=applyKey(encry.str,encry.key);
-  encry.score=score(encry.finalstr);
-  var runs=0;
-  //climb the hill
-  while(runs<1000)
+  encry=deriveKey(encry);
+
+  encry.str=contents.slice(10000,20000)
+  encry=deriveKey(encry); // a simple check to confrim a local max wasn't seen
+
+  answer=applyKey(contents,encry.key);
+
+
+
+  //console.log(Object.entries(encry.key).sort(function(a,b){return a[1].localeCompare(b[1]);}));
+
+
+}
+/*
+  name: derivekey
+  purpose: derives the key using a climb the hill apoarch
+  pre: the encry object
+  post: the encry object with new key.
+*/
+function deriveKey(encry){
+
+encry.teststr=applyKey(encry.str,encry.key);
+encry.score=score(encry.teststr);
+var runs=0;
+//climb the hill
+while(runs<1000)
+{
+  runs++;
+
+  encry.testkey=swapkeys(encry.key);
+
+  encry.teststr=applyKey(encry.str,encry.testkey);
+
+  encry.testscore=score(encry.teststr);
+
+  if(encry.testscore>encry.score)
   {
-    runs++;
-    // var timer=new Date();
-    // var time1=timer.getMilliseconds();
-    encry.testkey=swapkeys(encry.key);
-    // console.log(encry.testkey);
-    // console.log(encry.key)
-    // break;
-    // var time2=timer.getMilliseconds();
-    // console.log(time2);
-    encry.teststr=applyKey(encry.str,encry.testkey);
-    // var time3=timer.getMilliseconds();
-    // console.log(time3);
-    encry.testscore=score(encry.teststr);
-    // var time4=timer.getMilliseconds();
-    // console.log(time4);
-    //break;
-    if(encry.testscore>encry.score) //with better score rests run
-    {
-      encry.key=Object.assign({},encry.testkey);
-      encry.finalstr=encry.teststr;
-      encry.score=encry.testscore;
-      runs=0;
-      console.log(encry.testscore);
+    encry.key=Object.assign({},encry.testkey);
+    encry.finalstr=encry.teststr;
+    encry.score=encry.testscore;
+    runs=0;
+    console.log(encry.testscore);
 
-    }
   }
-
-
-
-
-
-
-
-
-
-
-
-  console.log(Object.entries(encry.key).sort(function(a,b){
-      return a[1].localeCompare(b[1]);
-  }));
-
-
+}
+return encry;
 }
 /* name: score()
   purpose: grades the swaped str based on

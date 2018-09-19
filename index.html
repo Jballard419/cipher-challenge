@@ -1,13 +1,30 @@
 <html>
  <head>
-  <title>PHP Test</title>
+  <title>Cipher</title>
  </head>
  <body>
-   <label for="basefile">Choice base file </label>
-   <input type="file" id="basefile" />
-   <input type="file" id="fileinput" />
-<script type="text/javascript" src="decoder.js">
+   <div id="part1" style="">
+     <label for="basefile">1)Load a base file (plain.txt) </label>
+     <input type="file" id="basefile" />
+   </div>
+   <div id="wait1" style="display:none">
+     <p> Loading base... </p>
+   </div>
+   <div id="part2" style="display:none;">
+     <label for="fileinput"> 2) chose a file to decrypt </label>
+     <input type="file" id="fileinput" />
+   </div>
+   <div id="wait2" style="display:none">
+     <p> Decrypting Encoded Message</p>
+   </div>
+   <div id="part3" style="display:none">
+     <label for="saveAs"> 3) Save Decoded message  </label>
+     <input id="saveAS" value="decrypt.txt"></input>
+     <button onclick="saveTextAsFile()">Save Text to File</button>
+  </div>
+  <script type="text/javascript" src="decoder.js">
 
-</script>
+  </script>
+
  </body>
 </html>
