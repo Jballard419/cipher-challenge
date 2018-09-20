@@ -95,7 +95,7 @@ function decoder(contents)
 
 
   encry.str=contents.slice(0,10000); /* the first 1000 incoded message */
-  console.log(encry.str.length);
+
 
   encry.key={};
   for (var i in alpha) {
@@ -106,7 +106,7 @@ function decoder(contents)
 
 
 
-  console.log(encry.key);
+  
 
   //create random starting key
   for (var i = 0; i < initswaps; i++) {
@@ -152,7 +152,7 @@ while(runs<1000)
     encry.finalstr=encry.teststr;
     encry.score=encry.testscore;
     runs=0;
-    console.log(encry.testscore);
+    //console.log(encry.testscore);
 
   }
 }
@@ -230,11 +230,11 @@ function makescorecard(contents)
 
   for (var i in scorecard) {
     scorecard[i]=Math.floor( Math.log(scorecard[i])-l); //this will give the log probabtily for every quadgram
-    // it was done this way instead of log(scorecard[i]/length) as it the log funiction runs quicker when 
+    // it was done this way instead of log(scorecard[i]/length) as it the log funiction runs quicker when
   }
 
   zeroscore=Math.floor((-l)*3/2); //assign a zero quadgram to 3/2 times as low as a 1 count
-  console.log(scorecard);
+
 
 }
 // purpose: give a randomint between 0 and num-1
@@ -256,7 +256,7 @@ function swapkeys(key) {
   } while (num1===num2);
 
  // var swap={(alpha[num1]):key[alpha[num2]], {alpha[num2]:key[alpha[num1]] }
- //console.log(swap);
+
   var newkey=Object.assign({},key)
   var x=alpha[num1]; var y=alpha[num2];
   newkey[x]=key[y];
