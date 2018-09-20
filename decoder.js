@@ -106,7 +106,7 @@ function decoder(contents)
 
 
 
-  
+
 
   //create random starting key
   for (var i = 0; i < initswaps; i++) {
@@ -255,7 +255,7 @@ function swapkeys(key) {
     var num2=randomint(26); //index to swap
   } while (num1===num2);
 
- // var swap={(alpha[num1]):key[alpha[num2]], {alpha[num2]:key[alpha[num1]] }
+
 
   var newkey=Object.assign({},key)
   var x=alpha[num1]; var y=alpha[num2];
